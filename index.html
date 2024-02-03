@@ -30,12 +30,26 @@
 
 
     <script> 
-    var map = L.map('map').setView([51.505, -0.09], 13);
+    var map = L.map('map').setView([0, 0], 2);
    
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
     }).addTo(map);
+
+	fetch('map.geojson')
+		.then(response => response.json())
+		.then(data => {
+			L.geoJSON(data, {
+				onEachFeature: function (feature, layer) {
+					layer.bindPopup("City: " + feature.properties.City + "<br>Population in 1985: " + 
+					feature.properties.Pop_1985 + " million" + "<br>Population in 2000: " + 
+					feature.properties.Pop_2000 + " million" + "<br>Population in 2015: " + 
+					feature.properties.Pop_2015 + " million");
+				}
+			}).addTo(map);
+		})
+		.catch(error => console.error('Error:', error));
 
     const marker = L.marker([51.5, -0.09]).addTo(map);
 
